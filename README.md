@@ -39,12 +39,13 @@ def attempt(cls, challenge, request, user):
 - add block of code after `flags = Flags.query.filter_by(challenge_id=challenge.id).all()`
 
 ```
-        user_id=int(user.id)
         import hashlib
         string_1=b"String1"
         string_2=b"String2"
         string_3=b"String3"
-        flag_hash=hashlib.sha256(string_1+int(user_id).to_bytes(4, byteorder='big')+string_2+int(challenge.id).to_bytes(4, byteorder='big')+string_3).hexdigest()
+        user_id=int(user.id)
+        challange_id=challenge.id
+        flag_hash=hashlib.sha256(string_1+int(user_id).to_bytes(4, byteorder='big')+string_2+int(challange_id).to_bytes(4, byteorder='big')+string_3).hexdigest()
         if submission=="flag{"+flag_hash+"}":
             return True, "Correct"
 ```
