@@ -16,6 +16,6 @@ sed -i.bak "s|flags = Flags.query.filter_by(challenge_id=challenge.id).all()|fla
 \n        if submission==\"flag{\"+flag_hash+\"}\":\
 \n            return True, \"Correct\"|g" CTFd/plugins/challenges/__init__.py
 
-docker-compose up -d
+# docker-compose up
 
 
