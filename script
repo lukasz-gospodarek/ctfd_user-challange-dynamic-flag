@@ -1,20 +1,29 @@
 #!/bin/bash
-git clone https://github.com/CTFd/CTFd.git
-cd CTFd
+# git clone https://github.com/CTFd/CTFd.git
+if [ -z "$1" ]
+then
+    ctfd_patch="./CTFd"
+else
+    ctfd_patch=$1
+fi
 
-sed -i "s/status, message = chal_class.attempt(challenge, request)/status, message = chal_class.attempt(challenge, request, user)/g" CTFd/api/v1/challenges.py
 
-sed -i "s/def attempt(cls, challenge, request):/def attempt(cls, challenge, request, user):/g" CTFd/plugins/challenges/__init__.py
+sed -i "s/status, message = chal_class.attempt(challenge, request)/status, message = chal_class.attempt(challenge, request, user)/g" $ctfd_patch/CTFd/api/v1/challenges.py
+
+sed -i "s/def attempt(cls, challenge, request):/def attempt(cls, challenge, request, user):/g" $ctfd_patch/CTFd/plugins/challenges/__init__.py
+
+source strings.conf
 
 sed -i.bak "s|flags = Flags.query.filter_by(challenge_id=challenge.id).all()|flags = Flags.query.filter_by(challenge_id=challenge.id).all()\
 \n        user_id=int(user.id)\
 \n        import hashlib\
-\n        string_1=b\"String1\" \
-\n        string_2=b\"String2\" \
-\n        string_3=b\"String3\" \
+\n        string_1=b\"$string1\" \
+\n        string_2=b\"$string2\" \
+\n        string_3=b\"$string3\" \
 \n        flag_hash=hashlib.sha256(string_1+int(user_id).to_bytes(4, byteorder='big')+string_2+int(challenge.id).to_bytes(4, byteorder='big')+string_3).hexdigest()\
 \n        if submission==\"flag{\"+flag_hash+\"}\":\
-\n            return True, \"Correct\"|g" CTFd/plugins/challenges/__init__.py
+\n            return True, \"Correct\"|g" $ctfd_patch/CTFd/plugins/challenges/__init__.py
+
 
 # docker-compose up
 
